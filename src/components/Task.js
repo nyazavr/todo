@@ -1,4 +1,5 @@
 import React from 'react';
+import classNames from 'classnames';
 
 export default class Task extends React.Component {
   constructor() {
@@ -7,7 +8,15 @@ export default class Task extends React.Component {
       editing: false,
       label: '',
     };
+    this.textInput = React.createRef();
   }
+
+  focout = () => {
+    this.setState({
+      editing: false,
+    });
+  };
+
   onLabelChange = (e) => {
     this.setState({
       label: e.target.value,
@@ -16,7 +25,7 @@ export default class Task extends React.Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    this.props.onItemEdit(this.state.label, this.props.id);
+    this.state.label.trim() ? this.props.onItemEdit(this.state.label, this.props.id) : null;
     this.setState({
       editing: false,
       label: '',
@@ -26,14 +35,20 @@ export default class Task extends React.Component {
     this.setState({ editing: !this.state.editing });
   };
 
+  componentDidUpdate() {
+    if (this.textInput.current) {
+      this.textInput.current.focus();
+    }
+  }
+
   render() {
     const { description, createdDate, id, onDeleted, onClickLabel, completed, visible } = this.props;
-    let typeTasc = '';
     console.log(this.state.editing);
-    completed ? (typeTasc = 'completed ') : (typeTasc = typeTasc.replace('completed ', ''));
-    this.state.editing ? (typeTasc += 'editing') : typeTasc.replace('editing', '');
     return visible ? (
-      <li className={typeTasc} key={id}>
+      <li
+        className={classNames({ completed: completed ? true : false }, { editing: this.state.editing ? true : false })}
+        key={id}
+      >
         <div className="view">
           <input className="toggle" type="checkbox" defaultChecked={completed} onClick={onClickLabel} id={'id:' + id} />
           <label htmlFor={'id:' + id}>
@@ -45,7 +60,14 @@ export default class Task extends React.Component {
         </div>
         {this.state.editing ? (
           <form onSubmit={this.onSubmit}>
-            <input onChange={this.onLabelChange} type="text" className="edit" value={this.state.label} />
+            <input
+              onBlur={this.onSubmit}
+              onChange={this.onLabelChange}
+              type="text"
+              ref={this.textInput}
+              className="edit"
+              value={this.state.label}
+            />
           </form>
         ) : (
           ''
