@@ -11,12 +11,6 @@ export default class Task extends React.Component {
     this.textInput = React.createRef();
   }
 
-  focout = () => {
-    this.setState({
-      editing: false,
-    });
-  };
-
   onLabelChange = (e) => {
     this.setState({
       label: e.target.value,
@@ -31,6 +25,7 @@ export default class Task extends React.Component {
       label: '',
     });
   };
+
   onClickEdit = () => {
     this.setState({ editing: !this.state.editing });
   };
@@ -40,6 +35,11 @@ export default class Task extends React.Component {
       this.textInput.current.focus();
     }
   }
+
+  handleKeyDown = (event) => {
+    console.log('User pressed: ', event.key);
+    event.key == 'Escape' ? this.setState({ editing: false }) : null;
+  };
 
   render() {
     const { description, createdDate, id, onDeleted, onClickLabel, completed, visible } = this.props;
@@ -61,7 +61,13 @@ export default class Task extends React.Component {
         {this.state.editing ? (
           <form onSubmit={this.onSubmit}>
             <input
-              onBlur={this.onSubmit}
+              tabIndex={0}
+              onKeyDown={this.handleKeyDown}
+              onBlur={() => {
+                this.setState({
+                  editing: false,
+                });
+              }}
               onChange={this.onLabelChange}
               type="text"
               ref={this.textInput}
