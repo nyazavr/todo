@@ -5,11 +5,35 @@ export default class Task extends React.Component {
   constructor() {
     super();
     this.state = {
+      min: '',
+      sec: '',
+      countTime: null,
+      pauseChec: false,
+      leftTime: 0,
       editing: false,
       label: '',
     };
     this.textInput = React.createRef();
   }
+
+  componentDidMount = () => {
+    this.setState({
+      min: this.props.minut,
+      sec: this.props.second,
+      countTime: this.props.second + this.props.minut * 60,
+    });
+  };
+  componentDidUpdate = () => {
+    if (this.textInput.current) {
+      this.textInput.current.focus();
+    }
+    let newCountTime = this.state.countTime - 1;
+    if (this.state.pauseChec && newCountTime) {
+      setTimeout(() => {
+        this.setState({ min: parseInt(newCountTime / 60), sec: newCountTime % 60, countTime: newCountTime });
+      }, 1000);
+    }
+  };
 
   onLabelChange = (e) => {
     this.setState({
@@ -29,13 +53,6 @@ export default class Task extends React.Component {
   onClickEdit = () => {
     this.setState({ editing: !this.state.editing });
   };
-
-  componentDidUpdate() {
-    if (this.textInput.current) {
-      this.textInput.current.focus();
-    }
-  }
-
   handleKeyDown = (event) => {
     console.log('User pressed: ', event.key);
     event.key == 'Escape' ? this.setState({ editing: false }) : null;
@@ -43,7 +60,6 @@ export default class Task extends React.Component {
 
   render() {
     const { description, createdDate, id, onDeleted, onClickLabel, completed, visible } = this.props;
-    console.log(this.state.editing);
     return visible ? (
       <li
         className={classNames({ completed: completed ? true : false }, { editing: this.state.editing ? true : false })}
@@ -52,8 +68,13 @@ export default class Task extends React.Component {
         <div className="view">
           <input className="toggle" type="checkbox" defaultChecked={completed} onClick={onClickLabel} id={'id:' + id} />
           <label htmlFor={'id:' + id}>
-            <span className="description">{description}</span>
-            <span className="created">{createdDate}</span>
+            <span className="title">{description}</span>
+            <span className="description">
+              <button className="icon icon-play" onClick={() => this.setState({ pauseChec: true })}></button>
+              <button className="icon icon-pause" onClick={() => this.setState({ pauseChec: false })}></button>
+              {this.state.min}:{this.state.sec}
+            </span>
+            <span className="created description">{createdDate}</span>
           </label>
           <button className="icon icon-edit" onClick={this.onClickEdit}></button>
           <button className="icon icon-destroy" onClick={onDeleted}></button>

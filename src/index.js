@@ -10,9 +10,33 @@ export default class App extends React.Component {
 
   state = {
     itemsData: [
-      { description: 'Completed task', createdDate: new Date(2023, 6, 2), id: 0, completed: true, visible: true },
-      { description: 'Editing task', createdDate: new Date(2023, 6, 2), id: 1, completed: false, visible: true },
-      { description: 'Active task', createdDate: new Date(2023, 6, 2), id: 2, completed: false, visible: true },
+      {
+        description: 'Completed task',
+        createdDate: new Date(2023, 6, 2),
+        id: 0,
+        completed: true,
+        visible: true,
+        minut: 1,
+        second: 5,
+      },
+      {
+        description: 'Editing task',
+        createdDate: new Date(2023, 6, 2),
+        id: 1,
+        completed: false,
+        visible: true,
+        minut: 1,
+        second: 5,
+      },
+      {
+        description: 'Active task',
+        createdDate: new Date(2023, 6, 2),
+        id: 2,
+        completed: false,
+        visible: true,
+        minut: 1,
+        second: 5,
+      },
     ],
     filterStatus: 'all',
   };
@@ -40,18 +64,20 @@ export default class App extends React.Component {
     });
   };
 
-  createItem = (text) => {
+  createItem = (text, min, sec) => {
     return {
       description: text,
       createdDate: new Date(),
       id: this.maxid++,
       completed: false,
       visible: true,
+      minut: min,
+      second: sec,
     };
   };
 
-  addItem = (text) => {
-    const newItem = this.createItem(text);
+  addItem = (text, min, sec) => {
+    const newItem = this.createItem(text, min, sec);
     this.setState(({ itemsData }) => {
       let newArr = itemsData.slice();
       newArr.push(newItem);
