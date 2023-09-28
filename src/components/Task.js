@@ -5,24 +5,12 @@ export default class Task extends React.Component {
   constructor() {
     super();
     this.state = {
-      min: '',
-      sec: '',
-      countTime: null,
-      pauseChec: false,
-      leftTime: 0,
       editing: false,
       label: '',
     };
     this.textInput = React.createRef();
   }
 
-  componentDidMount = () => {
-    this.setState({
-      min: this.props.minut,
-      sec: this.props.second,
-      countTime: this.props.second + this.props.minut * 60,
-    });
-  };
   componentDidUpdate = () => {
     if (this.textInput.current) {
       this.textInput.current.focus();
@@ -69,11 +57,6 @@ export default class Task extends React.Component {
           <input className="toggle" type="checkbox" defaultChecked={completed} onClick={onClickLabel} id={'id:' + id} />
           <label htmlFor={'id:' + id}>
             <span className="title">{description}</span>
-            <span className="description">
-              <button className="icon icon-play" onClick={() => this.setState({ pauseChec: true })}></button>
-              <button className="icon icon-pause" onClick={() => this.setState({ pauseChec: false })}></button>
-              {this.state.min}:{this.state.sec}
-            </span>
             <span className="created description">{createdDate}</span>
           </label>
           <button className="icon icon-edit" onClick={this.onClickEdit}></button>
