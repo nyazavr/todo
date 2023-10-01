@@ -20,7 +20,7 @@ export default class Task extends React.Component {
     this.setState({
       min: this.props.minut,
       sec: this.props.second,
-      countTime: this.props.second + this.props.minut * 60,
+      countTime: Number(this.props.second) + Number(this.props.minut * 60),
     });
   };
   componentDidUpdate = () => {
@@ -60,6 +60,7 @@ export default class Task extends React.Component {
 
   render() {
     const { description, createdDate, id, onDeleted, onClickLabel, completed, visible } = this.props;
+    console.log(this.state.countTime);
     return visible ? (
       <li
         className={classNames({ completed: completed ? true : false }, { editing: this.state.editing ? true : false })}
