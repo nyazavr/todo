@@ -8,34 +8,19 @@ export default class NewTaskForm extends React.Component {
       min: '',
       sec: '',
     };
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value,
-    });
   }
 
   onLabelChange = (e) => {
-    console.log('сработало');
     this.setState({
       label: e.target.value,
     });
   };
   onMinutChange = (e) => {
-    console.log('сработало');
     this.setState({
       min: e.target.value,
     });
   };
   onSecChange = (e) => {
-    console.log('сработало');
     this.setState({
       sec: e.target.value,
     });

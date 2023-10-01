@@ -20,17 +20,17 @@ export default class Task extends React.Component {
     this.setState({
       min: this.props.minut,
       sec: this.props.second,
-      countTime: this.props.second + this.props.minut * 60,
+      countTime: Number(this.props.second) + Number(this.props.minut * 60),
     });
   };
   componentDidUpdate = () => {
     if (this.textInput.current) {
       this.textInput.current.focus();
     }
-    let newCountTime = this.state.countTime - 1;
-    if (this.state.pauseChec && newCountTime) {
+    let countTime = this.state.countTime;
+    if (this.state.pauseChec && this.state.countTime + 1) {
       setTimeout(() => {
-        this.setState({ min: parseInt(newCountTime / 60), sec: newCountTime % 60, countTime: newCountTime });
+        this.setState({ min: parseInt(countTime / 60), sec: countTime % 60, countTime: countTime - 1 });
       }, 1000);
     }
   };
@@ -54,7 +54,6 @@ export default class Task extends React.Component {
     this.setState({ editing: !this.state.editing });
   };
   handleKeyDown = (event) => {
-    console.log('User pressed: ', event.key);
     event.key == 'Escape' ? this.setState({ editing: false }) : null;
   };
 
