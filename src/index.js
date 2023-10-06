@@ -39,10 +39,10 @@ function App() {
 
   const deletedItemsCompleted = () => {
     console.log(itemsData);
-    for (let item in this.state.itemsData) {
+    for (let item in itemsData) {
       console.log(item);
-      if (this.state.itemsData[item].completed) {
-        this.deletedItem(this.state.itemsData[item].id);
+      if (itemsData[item].completed) {
+        deletedItem(itemsData[item].id);
       }
     }
   };
