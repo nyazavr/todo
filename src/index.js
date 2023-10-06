@@ -1,48 +1,44 @@
 import { createRoot } from 'react-dom/client';
-import React from 'react';
+import React, { useState } from 'react';
 
 import TaskList from './components/TaskList';
 import Footer from './components/Footer';
 import Header from './components/Header';
 
-export default class App extends React.Component {
-  maxid = 100;
+function App() {
+  let maxid = 100;
+  const [itemsData, setItemsData] = useState([
+    {
+      description: 'Completed task',
+      createdDate: new Date(2023, 6, 2),
+      id: 0,
+      completed: true,
+      visible: true,
+      minut: 1,
+      second: 5,
+    },
+    {
+      description: 'Editing task',
+      createdDate: new Date(2023, 6, 2),
+      id: 1,
+      completed: false,
+      visible: true,
+      minut: 1,
+      second: 5,
+    },
+    {
+      description: 'Active task',
+      createdDate: new Date(2023, 6, 2),
+      id: 2,
+      completed: false,
+      visible: true,
+      minut: 1,
+      second: 5,
+    },
+  ]);
 
-  state = {
-    itemsData: [
-      {
-        description: 'Completed task',
-        createdDate: new Date(2023, 6, 2),
-        id: 0,
-        completed: true,
-        visible: true,
-        minut: 1,
-        second: 5,
-      },
-      {
-        description: 'Editing task',
-        createdDate: new Date(2023, 6, 2),
-        id: 1,
-        completed: false,
-        visible: true,
-        minut: 1,
-        second: 5,
-      },
-      {
-        description: 'Active task',
-        createdDate: new Date(2023, 6, 2),
-        id: 2,
-        completed: false,
-        visible: true,
-        minut: 1,
-        second: 5,
-      },
-    ],
-    filterStatus: 'all',
-  };
-
-  deletedItemsCompleted = () => {
-    console.log(this.state.itemsData);
+  const deletedItemsCompleted = () => {
+    console.log(itemsData);
     for (let item in this.state.itemsData) {
       console.log(item);
       if (this.state.itemsData[item].completed) {
@@ -50,113 +46,78 @@ export default class App extends React.Component {
       }
     }
   };
-
-  deletedItem = (id) => {
-    this.setState(({ itemsData }) => {
-      let idx = itemsData.findIndex((e) => {
-        return e.id === id;
-      });
-      let newArr = itemsData.slice();
-      newArr.splice(idx, 1);
-      return {
-        itemsData: newArr,
-      };
+  const deletedItem = (id) => {
+    let newArr = itemsData.slice();
+    let idx = newArr.findIndex((e) => {
+      return e.id === id;
     });
+    newArr.splice(idx, 1);
+    setItemsData(newArr);
   };
-
-  createItem = (text, min, sec) => {
+  const createItem = (text, min, sec) => {
     return {
       description: text,
       createdDate: new Date(),
-      id: this.maxid++,
+      id: maxid++,
       completed: false,
       visible: true,
       minut: min,
       second: sec,
     };
   };
-
-  addItem = (text, min, sec) => {
-    const newItem = this.createItem(text, min, sec);
-    this.setState(({ itemsData }) => {
-      let newArr = itemsData.slice();
-      newArr.push(newItem);
-      return {
-        itemsData: newArr,
-      };
-    });
+  const addItem = (text, min, sec) => {
+    let newArr = itemsData.slice();
+    const newItem = createItem(text, min, sec);
+    newArr.push(newItem);
+    setItemsData(newArr);
   };
-
-  clickLabel = (id) => {
-    this.setState(({ itemsData }) => {
-      let newArr = itemsData.slice();
-      let idx = newArr.findIndex((e) => {
-        return e.id === id;
+  const clickLabel = (id) => {
+    let newArr = itemsData.slice();
+    let idx = newArr.findIndex((e) => {
+      return e.id === id;
+    });
+    newArr[idx].completed = !newArr[idx].completed;
+    setItemsData(newArr);
+  };
+  const setFilter = (e) => {
+    let newArr = itemsData.slice();
+    if (e == 'All') {
+      newArr.map((el) => {
+        el.visible = true;
+        return el;
       });
-      newArr[idx].completed = !newArr[idx].completed;
-      return {
-        itemsData: newArr,
-      };
-    });
-  };
-
-  setFilter = (e) => {
-    this.setState(({ itemsData }) => {
-      let newArr = itemsData.slice();
-      if (e == 'All') {
-        newArr.map((el) => {
-          el.visible = true;
-          return el;
-        });
-      } else if (e == 'Active') {
-        newArr.map((el) => {
-          el.completed ? (el.visible = false) : (el.visible = true);
-          return el;
-        });
-      } else if (e == 'Completed') {
-        newArr.map((el) => {
-          el.completed ? (el.visible = true) : (el.visible = false);
-          return el;
-        });
-      }
-      return {
-        itemsData: newArr,
-      };
-    });
-  };
-
-  itemEdit = (text, id) => {
-    this.setState(({ itemsData }) => {
-      let newArr = itemsData.slice();
-      let idx = newArr.findIndex((e) => {
-        return e.id === id;
+    } else if (e == 'Active') {
+      newArr.map((el) => {
+        el.completed ? (el.visible = false) : (el.visible = true);
+        return el;
       });
-      newArr[idx].description = text;
-      return {
-        itemsData: newArr,
-      };
-    });
+    } else if (e == 'Completed') {
+      newArr.map((el) => {
+        el.completed ? (el.visible = true) : (el.visible = false);
+        return el;
+      });
+    }
+    setItemsData(newArr);
   };
-
-  render() {
-    const { itemsData } = this.state;
-    const doneCount = itemsData.filter((el) => !el.completed).length;
-    return (
-      <section className="todoapp">
-        <Header onItemAdd={this.addItem} />
-        <section className="main">
-          <TaskList
-            tasks={itemsData}
-            onDeleted={this.deletedItem}
-            onClickLabel={this.clickLabel}
-            onToggleImportant={this.ToggleDone}
-            onItemEdit={this.itemEdit}
-          />
-          <Footer doneLength={doneCount} onSetFilter={this.setFilter} deletedItems={this.deletedItemsCompleted} />
-        </section>
+  const itemEdit = (text, id) => {
+    let newArr = itemsData.slice();
+    let idx = newArr.findIndex((e) => {
+      return e.id === id;
+    });
+    newArr[idx].description = text;
+    setItemsData(newArr);
+  };
+  console.log(itemsData);
+  const doneCount = itemsData.filter((el) => !el.completed).length;
+  return (
+    <section className="todoapp">
+      <Header onItemAdd={addItem} />
+      <section className="main">
+        <TaskList tasks={itemsData} onDeleted={deletedItem} onClickLabel={clickLabel} onItemEdit={itemEdit} />
+        <Footer doneLength={doneCount} onSetFilter={setFilter} deletedItems={deletedItemsCompleted} />
       </section>
-    );
-  }
+    </section>
+  );
 }
-const root = createRoot(document.getElementById('root')); // createRoot(container!) if you use TypeScript
+const root = createRoot(document.getElementById('root'));
 root.render(<App />);
